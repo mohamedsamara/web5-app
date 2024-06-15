@@ -1,7 +1,13 @@
+import { useWeb5 } from "./lib/contexts";
+
 const App = () => {
+  const { did, connect, disconnect } = useWeb5();
+
   return (
     <>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <p>{did}</p>
+      <button onClick={connect}>Connect</button>
+      <button onClick={disconnect}>Disconnect</button>
     </>
   );
 };
