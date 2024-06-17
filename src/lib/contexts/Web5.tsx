@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   createContext,
   PropsWithChildren,
-  //   useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -15,7 +15,7 @@ interface Web5ContextType {
   web5: Web5 | null;
   did: string | null;
   loading: boolean;
-  //   error: string | null;
+  error: string | null;
   connect: () => void;
   disconnect: () => void;
 }
@@ -25,7 +25,7 @@ export const Web5Context = createContext<Web5ContextType>(
 );
 
 export const Web5Provider = ({ children }: PropsWithChildren) => {
-  //   const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [web5, setWeb5] = useState<Web5 | null>(null);
   const [did, setDid] = useState<string | null>(null);
@@ -40,8 +40,9 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
       const storedDid = localStorage.getItem(DID_STORAGE_KEY);
 
       const { web5, did } = await Web5.connect();
+
       if (did !== storedDid) {
-        // throw new Error("A new did has been created.");
+        console.log("A new did has been created.");
       }
 
       console.log("web5", web5, "did", did);
@@ -50,9 +51,9 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
       setDid(did);
 
       localStorage.setItem(DID_STORAGE_KEY, did);
-    } catch (error) {
-      console.log("error", error);
-      //   setError(error as unknown);
+    } catch (error: any) {
+      // TODO: Create a util to handle error messages
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -69,14 +70,12 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
       web5,
       did,
       loading,
-      //   error,
+      error,
       connect,
       disconnect,
     }),
-    [loading, web5, did]
+    [loading, web5, did, error]
   );
-
-  console.log("memoizedValue", memoizedValue);
 
   return (
     <Web5Context.Provider value={memoizedValue}>
